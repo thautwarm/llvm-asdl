@@ -183,8 +183,8 @@ class MemoryAccessAddressing(traits.Im):
         `LLVM Atomic Instructions and Concurrency`:
             https://llvm.org/docs/Atomics.html#llvm-atomic-instructions-and-concurrency-guide
 
-
     """
+
     Allocation: 'alloca'
     Load: 'load'
     Store: 'store'
@@ -195,10 +195,53 @@ class MemoryAccessAddressing(traits.Im):
     #   let >>= monad predicate
     #      a >>= (changeTo value)
 
+    BlockAddress: 'blockaddress'
+    # blockaddress(@function, %block)
+    # this is crucial to implement `yield` semantics.
+
+    # howto:
+    #   1. implement a struct {i8* address, T current_produced_item}
+    #                   address is initialized as the head of generator function
+    #   2. mark the address of block branches into the state.
+    #       each branch indicates `yield` statement.
+    #       each branch change the address to that of next branch.
+
+    # pseudo code:
+    #     type GeneratorState<T>{ Address adr,  T value }
+    #     def f(GeneratorState<int> s):
+    #             ; indirectbr i8* %2, [ label %.branch1, label %.branch2, label %.branch3, label %.done]
+    
+    #             ; .branch1:
+    #             ; set s.adr = addressof(.branch2)
+    #         yield 1  # s.value = 1
+    #             ; goto .end
+    #
+    #             ; .branch2
+    #             ; set s.addr = address_of(.branch3)
+    #         yield 2  # s.value = 2
+    #             ; goto end
+    #
+    #             ; .branch3
+    #             ; set s.addr = address_of(.done)
+    #         yield 3  # s.value = 3
+    #             ; goto end
+    #             ; .done
+    #             ; raise err
+    #             ; .end
+    #             ; ret void
+
 
 @data
 class Terminator(traits.Im):
     """
     https://llvm.org/docs/LangRef.html#terminator-instructions
     """
-    raise NotImplementedError
+    Return: 'ret'
+
+    Branch: 'br'
+
+    Switch: 'switch'
+
+    IndirectBranch: 'indirectbr'
+
+
