@@ -210,7 +210,7 @@ class MemoryAccessAddressing(traits.Im):
     #     type GeneratorState<T>{ Address adr,  T value }
     #     def f(GeneratorState<int> s):
     #             ; indirectbr i8* %2, [ label %.branch1, label %.branch2, label %.branch3, label %.done]
-    
+
     #             ; .branch1:
     #             ; set s.adr = addressof(.branch2)
     #         yield 1  # s.value = 1
@@ -243,5 +243,16 @@ class Terminator(traits.Im):
     Switch: 'switch'
 
     IndirectBranch: 'indirectbr'
+
+    Invoke: 'invoke'
+    # invoke can handle exceptions !!!!
+    #  if function invoking goes well, after that the state goes to branch `normal`
+    #  else the state goes to branch 'exception'
+
+    # and the call instruction is expected with no interruption.
+
+    Resume: 'resume'
+
+    CatchSwitch: 'catchswitch'
 
 
