@@ -52,7 +52,7 @@ Exception Handling
 
     In the head of your exception emitting function:
 
-    ```
+    ```llvm
     ; first allocate your exception data
         %.exc_data.i8 = call i8* @__cxa_allocate_exception(i64 4) #5
 
