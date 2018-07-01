@@ -97,7 +97,8 @@ Exception Handling
         %.exc_pad = landingpad { i8*, i32 }
           catch i8* bitcast (i8** @_ZTI{len(S)}{S}to i8*)
           ; you can catch more than one exception types here! :-)
-          ; you can use `filter [n x i8**] [exctyp1, ..., exctypn]` here to do filtering for some unexpected exceptions are inherited from others.
+          ; you can use `filter [n x i8**] [exctyp1, ..., exctypn]` here to 
+          ;   do filtering for some unexpected exceptions are inherited from others.
 
         %.exc.typeid = extractvalue { i8*, i32 } %.exc_pad, 1
         %.exc.typeid.expected = tail call i32 @llvm.eh.typeid.for(i8* bitcast (i8** @_ZTIi to i8*))
