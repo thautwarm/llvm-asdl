@@ -1,0 +1,17 @@
+
+import std.common.[DoubleQuotedStr Name]
+
+
+Number := R'0[Xx][\da-fA-F]+|\d+(?:\.\d+|)(?:E\-{0,1}\d+|)';
+
+str ::= DoubleQuotedStr+ as seq
+        rewrite ''.join(e.value for e in seq)
+
+var ::= Name as n
+        rewrite Symbol(*loc(n), n.value)
+
+assign ::= 'let' var as var '=' expr as expr
+            rewrite Assign(*loc(var), var, expr)
+
+
+external ::= 'external' symbol []

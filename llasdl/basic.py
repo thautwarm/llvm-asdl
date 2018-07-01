@@ -253,6 +253,7 @@ class Terminator(traits.Im):
 
     Resume: 'resume'
 
-    CatchSwitch: 'catchswitch'
+    LandingPad: 'landingpad'
 
+    Unreachable: 'unreachable'
 
