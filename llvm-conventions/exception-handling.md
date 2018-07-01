@@ -19,7 +19,7 @@ Next, for any type `S`, its type info is:
 @_ZTI{len(S)}{S} = linkonce_odr constant { i8*, i8* }
                         {
                             i8* bitcast (
-                                    i8** getelementptr (i8*, i8** %{S}, i64 2)
+                                    i8** getelementptr (i8*, i8** _ZTVN10__cxxabiv117__class_type_infoE, i64 2)
                                 to i8*
                                 ),
 
