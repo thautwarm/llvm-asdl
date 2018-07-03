@@ -15,7 +15,7 @@ number_imp := R'0[Xx][\da-fA-F]+|\d+(?:\.\d+|)(?:E\-{0,1}\d+|)'
 number ::= number_imp as n
         rewrite typed_num_from_token(n)
 
-symbol_imp := R'[^\'\(\)\s]+'
+symbol_imp := R'[^\'\(\)\s\:]+'
 
 lexer_helper cast := '(' ')' ':'
 
