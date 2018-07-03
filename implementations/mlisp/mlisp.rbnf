@@ -1,0 +1,70 @@
+pyimport mlisp.utils.[*]
+pyimport mlisp.asdl.[*]
+
+import std.common.[Space Comment DoubleQuotedStr]
+ignore [Space Comment]
+
+
+keyword cast := 'let' 'def' 'struct' 'lambda' 'lambda->'
+
+string ::= DoubleQuotedStr as s
+        rewrite String(*loc(s), s.value)
+
+number_imp := R'0[Xx][\da-fA-F]+|\d+(?:\.\d+|)(?:E\-{0,1}\d+|)'
+
+number ::= number_imp as n
+        rewrite typed_num_from_token(n)
+
+symbol_imp := R'[^\'\(\)\s]+'
+
+lexer_helper cast := '(' ')' ':'
+
+symbol ::= symbol_imp as sym
+        rewrite
+            Symbol(*loc(sym),  sym.value)
+
+def_or_let ::=
+    ('def' | 'let') as sign
+    symbol as sym
+    sexpr  as body
+    rewrite
+        (Define if sign.value == 'def' else Bind)(*loc(sign), sym.name, body)
+
+argdef ::= symbol as sym [':' sexpr as type]
+        rewrite
+            Argument(*loc(sym), sym.name, type)
+lambda ::=
+    | 'lambda'   as sign
+        '(' argdef* as args ')'  sexpr as body
+    | 'lambda->' as sign
+        sexpr as typedef '(' argdef* as args ')' sexpr as body
+    rewrite
+        Lambda(*loc(sign), args, body, typedef)
+
+field_decl ::= symbol as fieldname ':' sexpr as type
+            rewrite FieldDecl(*loc(fieldname), fieldname.name, type)
+
+struct ::= 'struct' as sign
+            '(' field_decl* as fields ')'
+            rewrite Struct(*loc(sign), fields)
+
+quote ::= '\'' as sign sexpr as value
+        rewrite Quote(*loc(sign), value)
+
+annotate
+      ::= ':' as sign sexpr as value sexpr as type
+      rewrite
+        Annotate(*loc(sign), value, type)
+
+atom ::=
+    | (string | symbol | number | quote) as body
+    | '(' (def_or_let | lambda | struct) as body ')'
+    rewrite body
+
+sexpr ::= '(' as sign sexpr* as expr_seq ')' | atom as atom
+        rewrite atom if atom else SExpr(*loc(sign), expr_seq)
+
+grammar ::= sexpr* as seq
+            rewrite
+               seq
+
